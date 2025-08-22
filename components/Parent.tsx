@@ -7,11 +7,17 @@ import TodoList from './TodoList';
 import { List } from '@/types/lists';
 import { Task } from '@/types/tasks';
 
-const Parent = ({ tasks, lists }: { tasks: Task[], lists : List[] }) => {
-  const [sharedData, setSharedData] = useState(0);
+const Parent = ({ tasks: initialTasks, lists }: { tasks: Task[], lists : List[] }) => {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [sharedData, setSharedData] = useState<number>(0);
 
-  const handleDataFromChild = (data) => {
+  const handleDataFromChild = (data: number) => {
     setSharedData(data);
+  };
+
+  // function for Popup to call when a new task is created
+  const handleTaskAdded = (newTask: Task) => {
+    setTasks((prev) => [...prev, newTask]);
   };
 
   return (
@@ -20,7 +26,7 @@ const Parent = ({ tasks, lists }: { tasks: Task[], lists : List[] }) => {
         <ListNav lists={lists} onDataSend={handleDataFromChild} />
       </div>
       <div className="w-3/4 my-5 flex flex-col">
-        <AddTask listId={sharedData} />
+        <AddTask listId={sharedData} onTaskAdded={handleTaskAdded} />
         <div className="my-5">
           <TodoList rows={tasks} data={sharedData} />
         </div>

@@ -17,10 +17,11 @@ import { useState } from "react"
 interface PopupProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => boolean | void;
-  listId: number | null
+  listId: number;
+  onTaskAdded: (task: any) => void;
 }
 
-const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId }) => {
+const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded }) => {
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [dueDateValue, setDueDateValue] = useState(today(getLocalTimeZone()));
@@ -44,7 +45,16 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId }) => {
 
     const json = await res.json();
     console.log('Response:', json);
-    setData((prev) => [...prev, json]); // Add new task to state
+
+    // update parent
+    onTaskAdded(json);
+
+    // reset fields
+    setTitleValue("");
+    setDescriptionValue("");
+
+    // close modal
+    onOpenChange(false);
   } catch (err) {
     console.error('Error creating task:', err);
   }
