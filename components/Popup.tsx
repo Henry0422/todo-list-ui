@@ -110,5 +110,5 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
   )
 }
 
-export default Popup
-Popup.useModal = useDisclosure;
+export default Popup;
+export const usePopup = useDisclosure;

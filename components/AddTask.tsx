@@ -2,10 +2,10 @@
 
 import { Button } from '@heroui/react';
 import { AiOutlinePlus } from 'react-icons/ai';
-import Popup from './Popup';
+import Popup, { usePopup } from './Popup';
 
 const AddTask = ({ listId, onTaskAdded } : { listId: number, onTaskAdded: (task: any) => void }) => {
-  const { isOpen, onOpen, onOpenChange } = Popup.useModal();
+  const { isOpen, onOpen, onOpenChange } = usePopup();
 
   return (
     <div>

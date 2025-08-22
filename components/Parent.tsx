@@ -23,7 +23,7 @@ const Parent = ({ tasks: initialTasks, lists }: { tasks: Task[], lists : List[] 
   return (
     <div className="flex">
       <div className="w-1/4 my-5 flex flex-col">
-        <ListNav lists={lists} onDataSend={handleDataFromChild} />
+        <ListNav lists={lists} onListSelect={handleDataFromChild} />
       </div>
       <div className="w-3/4 my-5 flex flex-col">
         <AddTask listId={sharedData} onTaskAdded={handleTaskAdded} />

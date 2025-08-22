@@ -38,6 +38,7 @@ const TodoList = ({rows, selectedListId}: { rows: Task[], selectedListId: number
     if (selectedListId === null) {
       setFilteredRows(rows); // show all if no list selected
     } else {
+      // Dynamically update table based on the selected todo list
       setFilteredRows(rows.filter((task) => task.listId == selectedListId + 1));
     }
   }, [rows, selectedListId]);
