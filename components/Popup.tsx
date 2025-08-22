@@ -27,8 +27,6 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
   const [dueDateValue, setDueDateValue] = useState(today(getLocalTimeZone()));
   
   const handleSubmitNewTodo = async () => {
-    console.log(titleValue);
-
     try {
     const res = await fetch(`http://localhost:3001/tasks`, {
       method: 'POST',
@@ -44,7 +42,6 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
     });
 
     const json = await res.json();
-    console.log('Response:', json);
 
     // update parent
     onTaskAdded(json);
@@ -60,9 +57,6 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
   }
     setTitleValue("");
   }
-
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
