@@ -1,18 +1,14 @@
-import { getAllTodos } from "@/api";
-import AddTask from "@/components/AddTask";
-import TodoList from "@/components/TodoList";
+import { getAllLists, getAllTodos } from "@/api";
+import Parent from "@/components/Parent";
 
 export default async function Home() {
   const tasks = await getAllTodos();
-
+  const lists = await getAllLists();
 
   return (
     <main>
-      <div className="text-center my-5 flex flex-col">
-        <h1 className="text-2xl font-bold">Todo List App</h1>
-        <AddTask />
-      </div>
-      <TodoList rows = {tasks} />
+      <h1 className="text-2xl text-center font-bold">Todo List App</h1>
+      <Parent tasks={tasks} lists={lists}/>
     </main>
   );
 }

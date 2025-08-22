@@ -9,18 +9,23 @@ import {
   Button,
   useDisclosure,
   Input,
+  DatePicker,
 } from "@heroui/react";
-import { FormEventHandler, useEffect, useState } from "react"
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { useState } from "react"
 
 interface PopupProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => boolean | void;
+  listId: number | null
 }
 
-const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange }) => {
-  const [titleValue, setTitleValue] = useState('')
-
-  const handleSubmitNewTodo= async () => {
+const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId }) => {
+  const [titleValue, setTitleValue] = useState('');
+  const [descriptionValue, setDescriptionValue] = useState('');
+  const [dueDateValue, setDueDateValue] = useState(today(getLocalTimeZone()));
+  
+  const handleSubmitNewTodo = async () => {
     console.log(titleValue);
 
     try {
@@ -31,8 +36,9 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange }) => {
       },
       body: JSON.stringify({
         title: titleValue,
-        description: 'description',
-        dueDate: new Date()
+        description: descriptionValue,
+        dueDate: new Date(),
+        listId: listId+1
       })
     });
 
@@ -58,19 +64,30 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange }) => {
                 <h3 className="font-bold text-lg">Add new task</h3>
                 <div className="modal-action">
                   <Input
-                    value={titleValue}
-                    onChange={e => setTitleValue(e.target.value)}
                     isRequired
                     label="Title"
-                    labelPlacement="outside"
                     name="title"
                     placeholder="Enter a title"
+                    value={titleValue}
+                    onChange={e => setTitleValue(e.target.value)}
                   />
                   <Input
                     label="Description"
-                    labelPlacement="outside"
                     name="description"
-                    placeholder="Description"
+                    placeholder="Optional"
+                    value={descriptionValue}
+                    onChange={e => setDescriptionValue(e.target.value)}
+                  />
+                  <DatePicker
+                    hideTimeZone
+                    isRequired
+                    showMonthAndYearPickers
+                    label="Due Date"
+                    value={dueDateValue}
+                    onChange={(date) => {
+                      if (date)
+                        setDueDateValue(date);
+                    }}
                   />
                 </div>
               </ModalBody>
