@@ -28,6 +28,14 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
   
   const handleSubmitNewTodo = async () => {
     try {
+      let dueDateIso: string | null = null;
+
+      if (dueDateValue) {
+        // Convert CalendarDateTime → JS Date → ISO string
+        const jsDate = dueDateValue.toDate(getLocalTimeZone());
+        dueDateIso = jsDate.toISOString();
+      }
+
       const res = await fetch(`http://localhost:3001/tasks`, {
         method: 'POST',
         headers: {
@@ -36,7 +44,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
         body: JSON.stringify({
           title: titleValue,
           description: descriptionValue,
-          dueDate: new Date(),
+          dueDate: dueDateIso,
           listId: listId+1
         })
       });
