@@ -31,16 +31,16 @@ const columns = [
   },
 ];
 
-const TodoList = ({rows, data}: { rows: Task[], data: number | null }) => {
+const TodoList = ({rows, selectedListId}: { rows: Task[], selectedListId: number | null }) => {
   const [filteredRows, setFilteredRows] = useState<Task[]>([]);
 
   useEffect(() => {
-    if (data === null) {
+    if (selectedListId === null) {
       setFilteredRows(rows); // show all if no list selected
     } else {
-      setFilteredRows(rows.filter((task) => task.listId == data + 1));
+      setFilteredRows(rows.filter((task) => task.listId == selectedListId + 1));
     }
-  }, [rows, data]);
+  }, [rows, selectedListId]);
 
   return (
     <Table aria-label="Example table with dynamic content">

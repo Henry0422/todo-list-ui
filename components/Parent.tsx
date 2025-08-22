@@ -28,7 +28,7 @@ const Parent = ({ tasks: initialTasks, lists }: { tasks: Task[], lists : List[] 
       <div className="w-3/4 my-5 flex flex-col">
         <AddTask listId={sharedData} onTaskAdded={handleTaskAdded} />
         <div className="my-5">
-          <TodoList rows={tasks} data={sharedData} />
+          <TodoList rows={tasks} selectedListId={sharedData} />
         </div>
       </div>
     </div>
