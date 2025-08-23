@@ -28,6 +28,10 @@ const columns = [
     label: "Description"
   },
   {
+    key: "status",
+    label: "Status" 
+  },
+  {
     key: "dueDate",
     label: "Due Date",
   },

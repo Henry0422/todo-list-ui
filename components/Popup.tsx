@@ -1,5 +1,6 @@
 "use client"
 
+import { formatStatus, TaskStatus } from "@/types/tasks";
 import {
   Modal,
   ModalContent,
@@ -10,9 +11,13 @@ import {
   useDisclosure,
   Input,
   DatePicker,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface PopupProps {
   isOpen: boolean;
@@ -25,6 +30,13 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [dueDateValue, setDueDateValue] = useState(today(getLocalTimeZone()));
+  const [statusValue, setStatusValue] = useState(TaskStatus.PENDING);
+
+  // Generate dropdown items from enum
+  const statusItems = Object.values(TaskStatus).map((status) => ({
+    key: status,
+    label: formatStatus(status)
+  }));
   
   const handleSubmitNewTodo = async () => {
     try {
@@ -44,6 +56,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
         body: JSON.stringify({
           title: titleValue,
           description: descriptionValue,
+          status: Array.from(statusValue).join(""),
           dueDate: dueDateIso,
           listId: listId+1
         })
@@ -57,6 +70,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
       // reset fields
       setTitleValue("");
       setDescriptionValue("");
+      setStatusValue(TaskStatus.PENDING);
 
       // close modal
       onOpenChange(false);
@@ -64,6 +78,13 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
       console.error('Error creating task:', err);
     }
   }
+
+  const selectedStatus = React.useMemo(() => {
+    if (!statusValue) {
+      return "Select status";   // 👈 your default text
+    }
+    return formatStatus(Array.from(statusValue).join(""));
+  }, [statusValue]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -88,6 +109,25 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onOpenChange, listId, onTaskAdded
                   value={descriptionValue}
                   onChange={e => setDescriptionValue(e.target.value)}
                 />
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button className="w-32" variant="bordered">{selectedStatus}</Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    disallowEmptySelection
+                    aria-label="Select status" 
+                    selectedKeys={statusValue}
+                    items={statusItems}
+                    selectionMode="single"
+                    onSelectionChange={setStatusValue}
+                  >
+                    {(item) => (
+                      <DropdownItem key={item.key}>
+                        {item.label}
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
                 <DatePicker
                   hideTimeZone
                   isRequired

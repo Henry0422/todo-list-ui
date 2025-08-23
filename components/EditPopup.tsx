@@ -1,4 +1,4 @@
-import { Task } from "@/types/tasks";
+import { formatStatus, Task, TaskStatus } from "@/types/tasks";
 import {
   Modal,
   ModalContent,
@@ -9,6 +9,10 @@ import {
   useDisclosure,
   Input,
   DatePicker,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@heroui/react";
 import { getLocalTimeZone, parseAbsolute, today } from "@internationalized/date";
 import React, { useEffect, useState } from 'react';
@@ -23,11 +27,19 @@ const EditPopup: React.FC<EditPopupProps> = ({ isOpen, onOpenChange, task}) => {
     const [titleValue, setTitleValue] = useState("");
     const [descriptionValue, setDescriptionValue] = useState("");
     const [dueDateValue, setDueDateValue] = useState<any>(null);
+    const [statusValue, setStatusValue] = useState(TaskStatus.PENDING);
+    
+      // Generate dropdown items from enum
+    const statusItems = Object.values(TaskStatus).map((status) => ({
+      key: status,
+      label: formatStatus(status)
+    }));
 
     useEffect(() => {
       if (task) {
         setTitleValue(task.title ?? "");
         setDescriptionValue(task.description ?? "");
+        setStatusValue(task.status?? "")
 
         // Convert ISO string to CalendarDateTime
         if (task.dueDate) {
@@ -57,6 +69,7 @@ const EditPopup: React.FC<EditPopupProps> = ({ isOpen, onOpenChange, task}) => {
         body: JSON.stringify({
           title: titleValue,
           description: descriptionValue,
+          status: Array.from(statusValue).join(""),
           dueDate: dueDateIso,
           listId: task?.listId
         })
@@ -68,6 +81,13 @@ const EditPopup: React.FC<EditPopupProps> = ({ isOpen, onOpenChange, task}) => {
         console.error('Error updating task:', err);
       }
     }
+
+    const selectedStatus = React.useMemo(() => {
+      if (!statusValue) {
+        return "Select status";
+      }
+      return formatStatus(Array.from(statusValue).join(""));
+    }, [statusValue]);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -92,6 +112,25 @@ const EditPopup: React.FC<EditPopupProps> = ({ isOpen, onOpenChange, task}) => {
                   value={descriptionValue}
                   onChange={e => setDescriptionValue(e.target.value)}
                 />
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button className="w-32" variant="bordered">{selectedStatus}</Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    disallowEmptySelection
+                    aria-label="Select status" 
+                    selectedKeys={statusValue}
+                    items={statusItems}
+                    selectionMode="single"
+                    onSelectionChange={setStatusValue}
+                  >
+                    {(item) => (
+                      <DropdownItem key={item.key}>
+                        {item.label}
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
                 <DatePicker
                   hideTimeZone
                   isRequired
